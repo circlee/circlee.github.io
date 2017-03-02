@@ -22,10 +22,17 @@
      
 
     <h1>이건 내 페이지다 </h1>
+      <div>
+      MSG : <input type="text" styel="width:150px;" v-model="msg"/>
+      <br/>
+      KEY : <input type="text" styel="width:150px;" v-model="key"/>
+      <br/>
+      <input type="button" value="send message" @click="sendMsg"/>
+      </div>
       <ul>
-        <li v-for="(key, item) in msgData">
+        <li v-for="(item , key) in msgData">
           <div>
-            {{item}} - {{key}}
+            MSG : {{item}} KEY : {{key}}
           </div>
         </li>
       </ul>
@@ -46,7 +53,9 @@
   var main = new Vue({
     el : '.main-content'
     ,data : {
-      msgData : { test : 123}
+      key : ''
+      ,msg : ''
+      ,msgData : { }
     }
     ,methods : {
       setData : function(data){
@@ -65,6 +74,9 @@
         if(key) {
           this.msgData[key];
         }
+      }
+      , sendMsg : function(){
+        writeMsg(this.key, this.msg);
       }
     }
 
