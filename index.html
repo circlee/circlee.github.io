@@ -60,14 +60,13 @@
 
   function checkAuthorized(){
     if(!isAuthorized) {
-      var githubUrl = 'https://github.com/login/oauth/authorize';
-
-      var params = {
-        client_id : '75d5ef9409dcb133029f'
-        ,redirect_uri : 'https://circlee.github.io'
-      }
-
-      document.location.href = githubUrl + '?' + serialize(params);
+      var provider = new firebase.auth.GithubAuthProvider(); 
+      firebase.auth().signInWithPopup(provider).then(function(result) {
+        isAuthorized = true;
+        // ...
+      }).catch(function(error) {
+        console.error(error)
+      });
     }
   }
 
