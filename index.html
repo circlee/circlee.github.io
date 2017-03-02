@@ -22,6 +22,13 @@
      
 
     <h1>이건 내 페이지다 </h1>
+      <ul>
+        <li v-for="(key, item) in msgData">
+          <div>
+            {{item}} - {{key}}
+          </div>
+        </li>
+      </ul>
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/circlee/circlee">Circlee</a> is maintained by <a href="https://github.com/circlee">circlee</a>.</span>
 
@@ -32,9 +39,36 @@
 
 
 
+<script src="https://unpkg.com/vue@2.2.1"></script>
 <script src="https://www.gstatic.com/firebasejs/3.7.0/firebase.js"></script>
 <script>
 
+  var main = new Vue({
+    el : '.main-content'
+    ,data : {
+      msgData : { test : 123}
+    }
+    ,methods : {
+      setData : function(data){
+        if(data) {
+          this.msgData = data;
+        }
+        
+      }
+      , setDataValue : function(key , val) {
+        if(key) {
+          this.msgData[key] = val;
+        }
+        
+      }
+      , delDataValue : function(key) {
+        if(key) {
+          this.msgData[key];
+        }
+      }
+    }
+
+  });
 
   
   function serialize(obj) {
@@ -58,26 +92,48 @@
   };
   firebase.initializeApp(config);
 
-  function checkAuthorized(){
+  function checkAuthorized( fnc ){
     if(!isAuthorized) {
       var provider = new firebase.auth.GithubAuthProvider(); 
       firebase.auth().signInWithPopup(provider).then(function(result) {
         isAuthorized = true;
         // ...
+
+        fnc();
       }).catch(function(error) {
         console.error(error)
+        return false;
       });
     }
   }
 
-  function writeUserData(userId, name, email, imageUrl) {
-    checkAuthorized()
-    firebase.database().ref('users/' + userId).set({
-      username: name,
-      email: email,
-      profile_picture : imageUrl
-    });
+  function writeMsg(msgId, msg) {
+    checkAuthorized( function(){
+      firebase.database().ref('msgs/' + msgId).set({
+        msg : msg
+      });
+    })
+    
   }
+
+  var startMsgRef = firebase.database().ref('msgs/');
+  startMsgRef.on('value', function(snapshot) {
+    main.setData(snapshot.val());
+  });
+
+  var msgRefs = firebase.database().ref('msgs/');
+  msgRefs.on('child_added', function(data) {
+    main.setDataValue(data.key , data.val());
+  });
+
+  msgRefs.on('child_changed', function(data) {
+    main.setDataValue(data.key , data.val());
+  });
+
+  msgRefs.on('child_removed', function(data) {
+    main.delDataValue(data.key);
+  });
+
 
 </script>
   
