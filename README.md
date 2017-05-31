@@ -1,5 +1,8 @@
 # test-prj
 
+> node_modules는 git 에서 제외하기 위해 gitignore처리 해야함.
+
+
 > A Vue.js project
 
 ## Build Setup
